@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090910">
+<title>LAST STAND | Math Apocalypse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--red:#ff294b;--purple:#a66bff;--gold:#ffd36b;--bg:#090910;--panel:#17141f;--line:#ffffff24}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:#fff;font-family:Prompt,sans-serif;background:radial-gradient(ellipse at 50% -20%,#571426 0%,transparent 48%),radial-gradient(ellipse at 100% 80%,#28113e 0%,transparent 40%),var(--bg)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.09;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:38px 38px}
+button,input,textarea{font:inherit}button{cursor:pointer}
+.app{max-width:1450px;margin:auto;padding:22px;position:relative}
+.top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:18px}
+.logo{font:900 25px Orbitron;letter-spacing:3px}.logo span{color:var(--red);text-shadow:0 0 20px var(--red)}
+.tag{font-size:9px;letter-spacing:4px;color:#aaa;margin-top:5px}
+.live{border:1px solid #ff294b88;color:#ff6178;padding:9px 14px;font:700 10px Orbitron;letter-spacing:1px;box-shadow:0 0 20px #ff294b22}
+.hero{text-align:center;padding:34px 10px 23px}
+.hero h1{font:900 clamp(30px,6vw,64px) Orbitron;margin:0;letter-spacing:3px;text-shadow:0 0 15px #ff294b,0 0 45px #a5002b}
+.hero h1 span{color:var(--red)}.hero p{font-size:11px;letter-spacing:3px;color:#aaa}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:20px 0 30px}
+.team{background:linear-gradient(145deg,#211b2b,#111019);border:1px solid #ffffff25;border-radius:12px;padding:16px;text-align:center;box-shadow:0 10px 30px #0008}
+.team-name{background:transparent;border:0;color:#fff;text-align:center;font-weight:700;width:100%;outline:none;font-size:14px}
+.score{font:900 30px Orbitron;color:var(--gold);margin:10px 0;text-shadow:0 0 15px #ffd36b55}
+.team-tools{display:flex;justify-content:center;gap:5px;flex-wrap:wrap}
+.mini{background:#ffffff10;border:1px solid #ffffff25;color:#ddd;padding:6px 9px;border-radius:5px;font-size:10px}
+.board-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:25px 0 13px}
+.board-head h2{font:700 15px Orbitron;letter-spacing:2px}.board-head span{font-size:11px;color:#999}
+.board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.category{min-height:82px;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px 5px;border-radius:8px;background:linear-gradient(140deg,#63172b,#251326);border:1px solid #ff294b88;box-shadow:inset 0 0 25px #ff294b18;font-weight:700;font-size:13px}
+.cell{min-height:92px;border-radius:8px;border:1px solid #ffffff27;color:var(--gold);font:900 25px Orbitron;background:linear-gradient(145deg,#211d2d,#100f18);transition:.2s}
+.cell:not(:disabled):hover{transform:translateY(-4px);border-color:var(--gold);box-shadow:0 0 25px #ffd36b44}
+.cell:disabled{opacity:.2;cursor:not-allowed;color:#666}
+.note{text-align:center;color:#777;font-size:10px;margin:20px 0 35px}
+.action,.gold,.ghost{border-radius:7px;padding:12px 19px;font-weight:700}
+.action{border:0;background:linear-gradient(110deg,#a9002a,#ff294b);color:white;box-shadow:0 0 20px #ff294b44}
+.gold{border:0;background:linear-gradient(110deg,#a56a0a,#ffd36b);color:#20130b}
+.ghost{border:1px solid #ffffff35;background:#ffffff0c;color:#fff}
+.modal{display:none;position:fixed;inset:0;z-index:10;background:#030207ed;backdrop-filter:blur(12px);align-items:center;justify-content:center;padding:14px}
+.modal.show{display:flex}
+.dialog{width:min(800px,100%);max-height:95vh;overflow:auto;padding:clamp(18px,4vw,35px);border-radius:16px;border:1px solid #ff294b99;background:linear-gradient(145deg,#251522,#0d0c14);box-shadow:0 0 70px #ff294b30,0 0 120px #a66bff18}
+.dialog-top{display:flex;justify-content:space-between;align-items:center;color:var(--red);font:700 12px Orbitron;letter-spacing:2px}
+.close{border:0;background:none;color:#aaa;font-size:27px}
+.points{text-align:center;color:var(--gold);font:700 13px Orbitron;margin-top:20px}
+.qtext{text-align:center;font-size:clamp(20px,4vw,30px);font-weight:600;line-height:1.7;margin:25px 0;white-space:pre-line}
+.answer{display:none;background:#ffd36b10;border:1px solid #ffd36b66;padding:18px;border-radius:10px;margin:18px 0;text-align:center}
+.answer.show{display:block}.answer-label{font:700 10px Orbitron;letter-spacing:3px;color:var(--gold);margin-bottom:8px}
+.answer-text{font-size:20px;color:var(--gold);font-weight:600}.solution{color:#ddd;font-size:13px;line-height:1.9;margin-top:12px;white-space:pre-line}
+.label{text-align:center;color:#aaa;font-size:12px;margin:20px 0 10px}
+.picks{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.pick{border:1px solid #ffffff35;background:#ffffff0c;color:white;border-radius:7px;padding:13px 5px;font-weight:600}
+.pick small{display:block;font-size:10px;color:#aaa;margin-top:5px}
+.pick:disabled{opacity:.2;cursor:not-allowed}.pick.selected{border-color:var(--gold);background:#ffd36b20}
+.wrong{display:none;text-align:center;color:#ff8392;border:1px solid #ff294b66;background:#ff294b12;padding:13px;border-radius:8px;margin:14px 0;font-size:13px}
+.wrong.show{display:block}.controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:15px 0}
+.result{display:none;text-align:center;padding:15px}.result.show{display:block}.result h3{color:var(--gold)}
+.editor{margin-top:30px;background:#14121b;border:1px solid #ffffff22;padding:18px;border-radius:10px}
+.editor h3{font:700 13px Orbitron;color:var(--purple)}
+.editor details{border-top:1px solid #ffffff20;padding:12px 0}.editor summary{cursor:pointer;font-size:13px}
+.editor input,.editor textarea{width:100%;background:#09090f;color:white;border:1px solid #ffffff30;border-radius:5px;padding:9px;margin:6px 0}
+.editor textarea{min-height:65px}.editgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.winner{display:none;text-align:center;padding:28px;border:1px solid var(--gold);background:#ffd36b0d;border-radius:12px;margin:25px 0}
+.winner.show{display:block}.winner h2{font:900 24px Orbitron;color:var(--gold)}
+@media(max-width:650px){.app{padding:12px}.team-grid{gap:6px}.team{padding:11px 4px}.team-name{font-size:11px}.score{font-size:21px}.board{gap:5px}.category{font-size:10px;min-height:75px;padding:4px 2px}.cell{min-height:68px;font-size:17px}.picks{gap:5px}.pick{font-size:11px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div><div class="logo">LAST <span>STAND</span></div><div class="tag">MATH APOCALYPSE · SURVIVAL CHALLENGE</div></div><div class="live">● SURVIVAL MODE ACTIVE</div></header>
+<section class="hero"><h1>THE LAST <span>STAND</span></h1><p>THINK FAST · SOLVE THE SEQUENCE · SURVIVE</p></section>
+<section class="team-grid" id="teams"></section>
+<div class="board-head"><h2>MISSION BOARD</h2><span>เลือกหมวดและคะแนนเพื่อเริ่มภารกิจ</span></div>
+<section class="board" id="board"></section>
+<div class="winner" id="winner"><h2>THE LAST SURVIVOR</h2><div id="winnerName" style="font-size:24px;margin:15px"></div><button class="action" onclick="resetGame()">เริ่มเกมใหม่</button></div>
+<div class="note">NO TIMER · 3 TEAMS · ONE LAST SURVIVOR</div>
+<section class="editor"><h3>GAME CONTROL / ตั้งค่าเกม</h3><p style="font-size:11px;color:#999">แก้ไขชื่อทีม คะแนน หมวด คำถาม และเฉลยได้</p><div id="editors"></div><button class="ghost" onclick="resetGame()">รีเซ็ตช่องคำถาม</button></section>
+</div>
+<div class="modal" id="modal"><div class="dialog">
+<div class="dialog-top"><span id="modalCategory">MISSION</span><button class="close" onclick="closeModal()">×</button></div>
+<div class="points" id="modalPoints"></div><div class="qtext" id="questionText"></div>
+<div class="answer" id="answerBox"><div class="answer-label">CORRECT ANSWER</div><div class="answer-text" id="answerText"></div><div class="solution" id="solutionText"></div></div>
+<div id="playArea"><div class="label" id="pickLabel">เลือกทีมที่กำลังตอบคำถาม</div><div class="picks" id="picks"></div>
+<div class="controls"><button class="ghost" onclick="reveal()">เปิดเฉลย</button></div>
+<div class="wrong" id="wrongPanel">ตอบผิด! ทีมนี้หมดสิทธิ์ตอบข้อนี้แล้ว<br><b>ทีมที่เหลือสามารถเลือกตอบต่อได้</b></div>
+<div class="controls" id="judgeControls" style="display:none"><button class="action" onclick="markWrong()">ตอบผิด</button><button class="gold" onclick="markCorrect()">ตอบถูก</button></div>
+<div class="controls" id="endControls" style="display:none"><button class="ghost" onclick="endQuestion()">ไม่มีทีมตอบถูก / จบข้อนี้</button></div></div>
+<div class="result" id="result"><h3 id="resultText"></h3><button class="action" onclick="closeModal()">กลับกระดานเกม</button></div>
+</div></div>
+<script>
+const categories=["ลำดับเลขคณิต","พจน์ทั่วไปของลำดับเลขคณิต","ลำดับเรขาคณิต","พจน์ทั่วไปของลำดับเรขาคณิต","โจทย์ปัญหา"];
+const scores=[100,200,300,400,500];
+let teams=[{name:"TEAM 01",score:0},{name:"TEAM 02",score:0},{name:"TEAM 03",score:0}];
+// แต่ละข้อ: [โจทย์, คำตอบ, วิธีคิด]
+let questions=[
+[
+["จงหาผลต่างร่วมของลำดับ 3, 7, 11, 15, ...","d = 4","d = 7 - 3 = 4"],
+["จงหาผลต่างร่วมของลำดับ 20, 16, 12, 8, ...","d = -4","d = 16 - 20 = -4"],
+["กำหนดให้ a₁ = 5 และ a₅ = 21 จงหาผลต่างร่วม d","d = 4","a₅ = a₁ + 4d\n21 = 5 + 4d\n16 = 4d ดังนั้น d = 4"],
+["ถ้า a₄ = 17 และ a₉ = 32 จงหาผลต่างร่วม d","d = 3","a₉ = a₄ + 5d\n32 = 17 + 5d\n15 = 5d ดังนั้น d = 3"],
+["ถ้า a₇ = 5 และ a₁₂ = 10 จงหาผลต่างร่วม d","d = 1","a₁₂ = a₇ + 5d\n10 = 5 + 5d ดังนั้น d = 1"]
+],
+[
+["ลำดับ 2, 5, 8, 11, ... จงหาพจน์ทั่วไป aₙ","aₙ = 3n - 1","aₙ = a₁ + (n-1)d\n= 2 + 3(n-1) = 3n - 1"],
+["กำหนดให้ a₁ = 4 และ d = 5 จงหาพจน์ทั่วไปของลำดับ","aₙ = 5n - 1","aₙ = 4 + 5(n-1) = 5n - 1"],
+["ถ้า a₃ = 12 และ a₈ = 27 จงหาพจน์ทั่วไป aₙ","aₙ = 3n + 3","d = (27-12)/(8-3) = 3\na₁ = 12 - 2(3) = 6\naₙ = 6 + 3(n-1) = 3n + 3"],
+["ถ้าพจน์ที่ 5 เท่ากับ 18 และผลต่างร่วมเท่ากับ 4 จงหาพจน์ที่ 20","a₂₀ = 78","a₂₀ = a₅ + (20-5)d\n= 18 + 15(4) = 78"],
+["จงหาพจน์ที่ 100 ของลำดับเลขคณิตที่มี a₇ = 5 และ a₁₂ = 10","a₁₀₀ = 98","d = (10-5)/(12-7) = 1\na₁₀₀ = a₇ + (100-7)d\n= 5 + 93 = 98"]
+],
+[
+["จงหาอัตราส่วนร่วมของลำดับ 2, 6, 18, 54, ...","r = 3","r = 6/2 = 3"],
+["จงหาอัตราส่วนร่วมของลำดับ 81, 27, 9, 3, ...","r = 1/3","r = 27/81 = 1/3"],
+["กำหนดให้ a₁ = 5 และ a₃ = 45 จงหาอัตราส่วนร่วม r โดยกำหนดให้ r เป็นจำนวนบวก","r = 3","a₃ = a₁r²\n45 = 5r²\nr² = 9 ดังนั้น r = 3"],
+["ถ้า a₂ = 12 และ a₅ = 324 จงหาอัตราส่วนร่วม r","r = 3","a₅ = a₂r³\n324 = 12r³\nr³ = 27 ดังนั้น r = 3"],
+["ถ้า a₃ = 20 และ a₆ = 540 จงหาอัตราส่วนร่วม r","r = 3","a₆ = a₃r³\n540 = 20r³\nr³ = 27 ดังนั้น r = 3"]
+],
+[
+["ลำดับ 3, 6, 12, 24, ... จงหาพจน์ทั่วไป aₙ","aₙ = 3 × 2ⁿ⁻¹","aₙ = a₁rⁿ⁻¹ = 3 × 2ⁿ⁻¹"],
+["กำหนดให้ a₁ = 4 และ r = 3 จงหาพจน์ทั่วไปของลำดับ","aₙ = 4 × 3ⁿ⁻¹","ใช้สูตร aₙ = a₁rⁿ⁻¹ แทนค่า a₁ = 4 และ r = 3"],
+["ถ้าลำดับเรขาคณิตมี a₁ = 2 และ r = 2 จงหาพจน์ที่ 8","a₈ = 256","a₈ = 2 × 2⁷ = 256"],
+["ถ้า a₃ = 12 และ r = 2 จงหาพจน์ที่ 7","a₇ = 192","a₇ = a₃ × 2⁽⁷⁻³⁾ = 12 × 16 = 192"],
+["ถ้าพจน์ที่ 4 เท่ากับ 24 และพจน์ที่ 7 เท่ากับ 192 จงหาพจน์ทั่วไป aₙ โดยกำหนดให้ r เป็นจำนวนบวก","aₙ = 3 × 2ⁿ⁻¹","a₇/a₄ = r³ = 192/24 = 8 จึงได้ r = 2\na₁ = 24/2³ = 3\nดังนั้น aₙ = 3 × 2ⁿ⁻¹"]
+],
+[
+["นักเรียนออมเงินวันแรก 10 บาท และเพิ่มเงินออมวันละ 5 บาท วันที่ 5 จะออมเงินกี่บาท?","30 บาท","a₅ = 10 + (5-1)5 = 30 บาท"],
+["โรงละครมีที่นั่งแถวแรก 12 ที่นั่ง แถวต่อไปเพิ่มขึ้นแถวละ 3 ที่นั่ง แถวที่ 10 จะมีที่นั่งกี่ที่?","39 ที่นั่ง","a₁₀ = 12 + (10-1)3 = 39 ที่นั่ง"],
+["นักเรียนเริ่มออมเงินวันแรก 20 บาท และเพิ่มเงินออมวันละ 10 บาท วันที่ 15 จะออมเงินกี่บาท?","160 บาท","a₁₅ = 20 + (15-1)10 = 160 บาท"],
+["แบคทีเรียเพิ่มจำนวนเป็น 2 เท่าทุกชั่วโมง หากเริ่มต้นมี 5 ตัว เมื่อครบ 6 ชั่วโมงจะมีแบคทีเรียกี่ตัว?","320 ตัว","จำนวนหลังครบ 6 ชั่วโมง = 5 × 2⁶ = 320 ตัว"],
+["ลูกบอลถูกปล่อยจากความสูง 160 เซนติเมตร โดยทุกครั้งที่เด้งขึ้นจะสูงเป็นครึ่งหนึ่งของความสูงครั้งก่อน จงหาความสูงของการเด้งครั้งที่ 6","2.5 เซนติเมตร","การเด้งครั้งที่ 1 สูง 160 × 1/2 = 80 ซม.\nการเด้งครั้งที่ 6 = 160 × (1/2)⁶ = 2.5 ซม."]
+]
+];
+let used=Array.from({length:5},()=>Array(5).fill(false)),current=null,selected=null,eliminated=[],finished=false;
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function renderTeams(){document.getElementById("teams").innerHTML=teams.map((t,i)=>`<div class="team"><input class="team-name" aria-label="ชื่อทีม ${i+1}" value="${esc(t.name)}" onchange="teams[${i}].name=this.value"><div class="score">${t.score.toLocaleString()}</div><div class="team-tools"><button class="mini" onclick="changeScore(${i},100)">+100</button><button class="mini" onclick="changeScore(${i},-100)">-100</button><button class="mini" onclick="manualScore(${i})">แก้คะแนน</button></div></div>`).join("");}
+function changeScore(i,n){teams[i].score+=n;renderTeams();}
+function manualScore(i){let n=prompt("ใส่คะแนนใหม่",teams[i].score);if(n!==null&&n.trim()!==""&&!isNaN(n)){teams[i].score=Number(n);renderTeams();}}
+function renderBoard(){let html="";categories.forEach(cat=>html+=`<div class="category">${esc(cat)}</div>`);for(let r=0;r<5;r++)for(let c=0;c<5;c++)html+=`<button class="cell" ${used[c][r]?"disabled":""} onclick="openQuestion(${c},${r})">${used[c][r]?"✓":scores[r]}</button>`;document.getElementById("board").innerHTML=html;}
+function openQuestion(c,r){current={c,r};selected=null;eliminated=[];finished=false;document.getElementById("modalCategory").textContent=categories[c];document.getElementById("modalPoints").textContent=scores[r]+" POINTS";document.getElementById("questionText").textContent=questions[c][r][0];document.getElementById("answerText").textContent=questions[c][r][1];document.getElementById("solutionText").textContent=questions[c][r][2];document.getElementById("answerBox").classList.remove("show");document.getElementById("wrongPanel").classList.remove("show");document.getElementById("result").classList.remove("show");document.getElementById("playArea").style.display="block";document.getElementById("judgeControls").style.display="none";document.getElementById("endControls").style.display="none";document.getElementById("pickLabel").textContent="เลือกทีมที่กำลังตอบคำถาม";renderPicks();document.getElementById("modal").classList.add("show");}
+function renderPicks(){document.getElementById("picks").innerHTML=teams.map((t,i)=>`<button class="pick ${selected===i?"selected":""}" ${eliminated.includes(i)||finished?"disabled":""} onclick="selectTeam(${i})">${esc(t.name)}<small>${eliminated.includes(i)?"ตอบผิดแล้ว":selected===i?"กำลังตอบ":"เลือกทีมนี้"}</small></button>`).join("");}
+function selectTeam(i){if(finished||eliminated.includes(i))return;selected=i;renderPicks();document.getElementById("pickLabel").textContent=teams[i].name+" กำลังตอบคำถาม";document.getElementById("judgeControls").style.display="flex";document.getElementById("endControls").style.display="none";}
+function markWrong(){if(selected===null)return;eliminated.push(selected);selected=null;document.getElementById("judgeControls").style.display="none";document.getElementById("wrongPanel").classList.add("show");document.getElementById("pickLabel").textContent="ทีมที่เหลือสามารถเลือกตอบได้";renderPicks();document.getElementById("endControls").style.display="flex";if(eliminated.length===3)reveal();}
+function markCorrect(){if(selected===null)return;let i=selected;teams[i].score+=scores[current.r];used[current.c][current.r]=true;renderTeams();renderBoard();reveal();finishQuestion(teams[i].name+" ตอบถูก! ได้รับ "+scores[current.r]+" คะแนน");}
+function reveal(){document.getElementById("answerBox").classList.add("show");}
+function endQuestion(){used[current.c][current.r]=true;renderBoard();reveal();finishQuestion("ไม่มีทีมตอบถูกในข้อนี้");}
+function finishQuestion(message){finished=true;document.getElementById("playArea").style.display="none";document.getElementById("resultText").textContent=message;document.getElementById("result").classList.add("show");}
+function closeModal(){document.getElementById("modal").classList.remove("show");checkWinner();}
+function checkWinner(){if(used.every(row=>row.every(Boolean))){let max=Math.max(...teams.map(t=>t.score)),winners=teams.filter(t=>t.score===max);document.getElementById("winnerName").textContent=winners.map(t=>t.name).join(" / ")+" · "+max+" POINTS";document.getElementById("winner").classList.add("show");}}
+function resetGame(){if(!confirm("รีเซ็ตช่องคำถามทั้งหมดหรือไม่? คะแนนทีมจะยังคงเดิม"))return;used=Array.from({length:5},()=>Array(5).fill(false));document.getElementById("winner").classList.remove("show");renderBoard();}
+function renderEditors(){let html="";categories.forEach((cat,c)=>{html+=`<details><summary>${esc(cat)}</summary><input value="${esc(cat)}" onchange="categories[${c}]=this.value;renderBoard();renderEditors()" placeholder="ชื่อหมวด">`;for(let r=0;r<5;r++)html+=`<div class="editgrid"><div><label style="font-size:10px;color:#aaa">โจทย์ ${scores[r]} คะแนน</label><textarea onchange="questions[${c}][${r}][0]=this.value">${esc(questions[c][r][0])}</textarea></div><div><label style="font-size:10px;color:#aaa">คำตอบและวิธีคิด</label><textarea onchange="questions[${c}][${r}][1]=this.value">${esc(questions[c][r][1])}</textarea><textarea onchange="questions[${c}][${r}][2]=this.value">${esc(questions[c][r][2])}</textarea></div></div>`;html+="</details>";});document.getElementById("editors").innerHTML=html;}
+renderTeams();renderBoard();renderEditors();
+</script>
+</body>
+</html>
